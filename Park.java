@@ -54,7 +54,46 @@ public class Park {
         System.out.println("==============");
 
     }
+public void getData(){
 
+        String fileName = "b.txt"; // Nom du fichier à lire
+        Map<Integer,Vehicule> dt = new HashMap<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            String line;
+            while ((line = reader.readLine()) != null) {
+
+                String[] tab = line.split(",");
+                Vehicule v = null;
+                if(tab[1].equals("voiture")) v = new Voiture(tab[2]);
+                else if(tab[1].equals("moto")) v = new Moto(tab[2]);
+                else if(tab[1].equals("camion")) v = new Camion(tab[2]);
+                dt.put(Integer.parseInt(tab[0]),v);
+            }
+            reader.close();
+        } catch (IOException e) {
+            System.err.println("Erreur de lecture du fichier: " + e.getMessage());
+        }
+
+        this.stock = dt;
+    }
+    public void saveData(){
+        Map<Integer,Vehicule> dt = this.stock;
+        try{
+
+            FileWriter f = new FileWriter("b.txt",true);
+            for(Map.Entry<Integer,Vehicule> v:dt.entrySet()){
+
+                String chaine = v.getKey().toString()+""+v.getValue().toCSVType();
+                f.write(chaine);
+            }
+            f.close();
+
+        }catch (IOException e){
+
+            System.out.println("Impossible D'ecrire dans le fichier :"+e.getMessage());
+        }
+    }
     public void lookVehicule(String mark){
 
         boolean trouver = false;
