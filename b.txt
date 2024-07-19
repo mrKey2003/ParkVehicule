@@ -1,6 +1,4 @@
-0,Moto,buggati
-1,Voiture,BMW
-0,Moto,buggati
-1,Voiture,BMW
-0,Moto,buggati
-1,Voiture,BMW
+0,moto,buggati
+1,voiture,BMW
+0,moto,buggati
+1,voiture,BMW
