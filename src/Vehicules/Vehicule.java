@@ -25,7 +25,10 @@ public class Vehicule {
     public String getType() {
         return type;
     }
+    public String toCSVType(){
 
+        return ","+this.type+","+this.mark+"\n";
+    }
     @Override
     public String toString() {
         return "Vehicule:" +

@@ -1,5 +1,9 @@
 import Vehicules.Vehicule;
-
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -9,10 +13,47 @@ public class Park {
     private Map<Integer,Vehicule> stock = new HashMap<>();
     private int key = 0;
 
-    public void nvVehicule(Vehicule v){
+    public void nvVehicule(Vehicule v)  {
 
         this.stock.put(this.key,v);
         this.key = this.key+1;
+    }
+    public Map<Integer,Vehicule> getStock(){
+
+        return this.stock;
+    }
+    public void getData(){
+
+        String fileName = "b.txt"; // Nom du fichier à lire
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            String line;
+            while ((line = reader.readLine()) != null) {
+
+                System.out.println(line); // Afficher chaque ligne du fichier
+            }
+            reader.close();
+        } catch (IOException e) {
+            System.err.println("Erreur de lecture du fichier: " + e.getMessage());
+        }
+    }
+    public void saveData(Map<Integer,Vehicule> stock){
+
+        try{
+
+            FileWriter f = new FileWriter("b.txt",true);
+            for(Map.Entry<Integer,Vehicule> v:stock.entrySet()){
+
+                String chaine = v.getKey().toString()+""+v.getValue().toCSVType();
+                f.write(chaine);
+            }
+            f.close();
+
+        }catch (IOException e){
+
+            System.out.println(e.getMessage());
+        }
     }
     public void rmVoiture(int ID){
 
@@ -21,6 +62,7 @@ public class Park {
 
             this.stock.remove(ID);
         }
+
     }
 
     public void modifVehicule(int ID,String mark,String type){
