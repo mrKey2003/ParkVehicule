@@ -19,7 +19,6 @@ public class Main {
         int sortie = 0;
         while (sortie != 1) {
 
-            pk.getData();
             System.out.print("Park @ ");
             String cmd = clavier.nextLine();
             switch (cmd) {
@@ -37,7 +36,6 @@ public class Main {
                     }
                 }
                 case "exit" -> {
-                    pk.saveData();
                     sortie = 1;
                 }
                 case "list" -> pk.printl();

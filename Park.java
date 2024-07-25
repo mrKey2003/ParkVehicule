@@ -1,3 +1,5 @@
+import BDGestion.DBRequest;
+import BDGestion.DBconnexion;
 import Vehicules.Camion;
 import Vehicules.Moto;
 import Vehicules.Vehicule;
@@ -19,133 +21,84 @@ public class Park {
 
     public void nvVehicule(Vehicule v)  {
 
-        this.stock.put(this.key,v);
-        this.key = this.key+1;
+        String type = v.getType();
+        String makr = v.getType();
+        boolean r = DBRequest.RQt(DBconnexion.getInstance(),"INSERT INTO listvehicule(id,type,mark)VALUES(NULL,'"+type+"','"+makr+"')");
+        if(r) System.out.println("Insertion Faite");
+        else System.out.println("Insertion pas Faite");
     }
 
-    
     public void rmVoiture(int ID){
 
-        boolean exist = this.stock.containsKey(ID);
-        if(exist == true){
-
-            this.stock.remove(ID);
-        }
-
+        boolean r = DBRequest.RQt(DBconnexion.getInstance(),"DELETE FROM listevehicule WHERE id="+ID+"");
+        if(r) System.out.println("Suppression Faite");
+        else System.out.println("Suppresion no faite");
     }
 
     public void modifVehicule(int ID,String mark,String type){
 
-        boolean exist = this.stock.containsKey(ID);
-        if(exist){
-
-            this.stock.get(ID).setMark(mark);
-            this.stock.get(ID).setType(type);
-        }
+        boolean r = DBRequest.RQt(DBconnexion.getInstance(),"UPDATE listevehicule SET type='"+type+"',mark='"+mark+"' WHERE id="+ID+"");
+        if(r) System.out.println("Modification Faite");
+        else System.out.println("Modification non faite");
     }
 
     public void printl(){
 
         System.out.println("==============");
-        for(Map.Entry<Integer,Vehicule> v:this.stock.entrySet()){
+        System.out.println(" ID  :  TYPE  :  MARK  ");
+        Map<Integer,Vehicule> r = DBRequest.RQ(DBconnexion.getInstance(),"SELECT * FROM listevehicule");
+        for(Map.Entry<Integer,Vehicule> v:r.entrySet()){
 
-            System.out.println("ID"+v.getKey().toString()+","+v.getValue());
-        }
-        System.out.println("==============");
-
-    }
-public void getData(){
-
-        String fileName = "b.txt"; // Nom du fichier à lire
-        Map<Integer,Vehicule> dt = new HashMap<>();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            String line;
-            while ((line = reader.readLine()) != null) {
-
-                String[] tab = line.split(",");
-                Vehicule v = null;
-                if(tab[1].equals("voiture")) v = new Voiture(tab[2]);
-                else if(tab[1].equals("moto")) v = new Moto(tab[2]);
-                else if(tab[1].equals("camion")) v = new Camion(tab[2]);
-                dt.put(Integer.parseInt(tab[0]),v);
-            }
-            reader.close();
-        } catch (IOException e) {
-            System.err.println("Erreur de lecture du fichier: " + e.getMessage());
-        }
-
-        this.stock = dt;
-    }
-    public void saveData(){
-        Map<Integer,Vehicule> dt = this.stock;
-        try{
-
-            FileWriter f = new FileWriter("b.txt",true);
-            for(Map.Entry<Integer,Vehicule> v:dt.entrySet()){
-
-                String chaine = v.getKey().toString()+""+v.getValue().toCSVType();
-                f.write(chaine);
-            }
-            f.close();
-
-        }catch (IOException e){
-
-            System.out.println("Impossible D'ecrire dans le fichier :"+e.getMessage());
+            System.out.println(v.getKey()+" : "+v.getValue().toString());
         }
     }
+
     public void lookVehicule(String mark){
 
-        boolean trouver = false;
-        for(Map.Entry<Integer,Vehicule> v:this.stock.entrySet()){
+        Map<Integer,Vehicule> r = DBRequest.RQ(DBconnexion.getInstance(),"SELECT * FROM listevehicule WHERE mark LIKE '%"+mark+"%'");
+        if(r.isEmpty()) System.out.println("Aucun vehicule ne correpsond");
+        else{
 
-            if(v.getValue().getMark().equals(mark)){
+            for(Map.Entry<Integer,Vehicule> v:r.entrySet()){
 
-                System.out.println(v.getValue().toString());
-                trouver = true;
-                break;
+                System.out.println(v.getKey()+" : "+v.getValue().toString());
             }
         }
-        if(trouver == false){
 
-            System.out.println("Aucun Vehicule ne correspond a votre Recherche");
-        }
     }
 
     public  void lookVehiculeParL(char l){
 
-        for(Map.Entry<Integer,Vehicule> v:this.stock.entrySet()){
+        Map<Integer,Vehicule> r = DBRequest.RQ(DBconnexion.getInstance(),"SELECT * FROM listevehicule WHERE mark LIKE '%"+l+"%'");
+        if(r.isEmpty()) System.out.println("Aucun vehicule ne correpsond");
+        else{
 
-            if(v.getValue().getMark().charAt(0) == l){
+            for(Map.Entry<Integer,Vehicule> v:r.entrySet()){
 
-                System.out.println(v.getValue().toString());
+                System.out.println(v.getKey()+" : "+v.getValue().toString());
             }
         }
     }
     public void nbrVehicule(){
 
-        System.out.println("Il y'a "+this.key+" vehicule(s) en stock");
+        int r = DBRequest.RQc(DBconnexion.getInstance(),"SELECT COUNT(*) FROM listevehicule");
+        System.out.println("Nombre de vehicule  = "+r);
     }
     public void nbrVehiculeType(String type){
 
-        int nombre = 0;
-        for(Map.Entry<Integer,Vehicule> v:this.stock.entrySet()){
-
-            if(v.getValue().getType().equals(type)){
-                nombre = nombre+1;
-            }
-        }
-        System.out.println("il y'a "+nombre+" vehicule(s) de Type "+type);
+        int r = DBRequest.RQc(DBconnexion.getInstance(),"SELECT COUNT(*) FROM listevehicule WHERE type='"+type+"'");
+        System.out.println("Nombre de vehicule de type "+type+" = "+r);
     }
     public void listeVehiculeType(String type){
 
-        System.out.println(type.toUpperCase(Locale.ROOT));
-        for(Map.Entry<Integer,Vehicule> v:this.stock.entrySet()){
+        System.out.println("==============");
+        System.out.println(" ID  :  TYPE  :  MARK  ");
+        Map<Integer,Vehicule> r = DBRequest.RQ(DBconnexion.getInstance(),"SELECT * FROM listevehicule WHERE type='"+type+"'");
+        for(Map.Entry<Integer,Vehicule> v:r.entrySet()){
 
-            if(v.getValue().getType().equals(type)){
-
-                System.out.println(v.getValue().toString());
-            }
+            System.out.println(v.getKey()+" : "+v.getValue().toString());
         }
+        System.out.println("==============");
+
     }
 }
